@@ -16,7 +16,7 @@ module.exports = {
       })
   },
     modificaevento: function(req,res){
-        modelli.cercautente(req, function(err,data){
+        modelli.cercaevento(req, function(err,data){
             if(data){
             modelli.modificaevento(req)
             res.send("nome cambiato");
@@ -27,7 +27,7 @@ module.exports = {
          })
     },
     togglecaevento: function(req,res){
-        modelli.cercautente(req, function(err,data){
+        modelli.cercaevento(req, function(err,data){
             if(data){
             modelli.toggleevento(req)
             res.send("stato cambiato");
@@ -42,7 +42,7 @@ module.exports = {
   getevento: function(req,res){
       modelli.cercaevento(req,function(err,dati){
           if(dati){
-              modelli.datievento( req, function(err,data){
+              modelli.datieventi( req, function(err,data){
                       res.send(data)
           })}
           else 

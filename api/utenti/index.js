@@ -2,7 +2,9 @@ const modelli =require('./model.js')
 
 module.exports ={
      accedi: function(req,res){
-        
+        modelli.datiutente(req.body, function(err,data){
+            res.send(data.username)
+        })
     },
     eliminautente: function(req,res){
         modelli.cercautente(req.body, function(err,data){
@@ -34,7 +36,7 @@ module.exports ={
             if(data)
                 res.send("utente gia registrato")
             else{
-                modelli.scriviutente(req.body,true);
+                modelli.scriviutente(req.body);
                 res.send("utente aggiunto")
             }
         });

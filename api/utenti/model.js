@@ -1,8 +1,9 @@
+
 const mongoose = require("mongoose");
-const userSchema = new mongoose.Schema({
+const utentiSchema = new mongoose.Schema({
     username: {
         type: String,
-        minlength: 6
+        
     },
     password: {
         type: String,
@@ -10,26 +11,27 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+const utentimodel = mongoose.model("utente", utentiSchema);
 
 async function elimina(utente){
-    await mongoose.connect(MONGODB_URI);
-    userSchema.deleteOne({username: utente.username},function(err,user){})
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    utentimodel.deleteOne({username: utente.username},function(err,user){})
 };
 
 async function scrivi(utente){
     if(utente.username==null)
         return
-    let db = await mongoose.connect(MONGODB_URI);
+     await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
     
-    let novoutente = new userSchema({username: utente.username , password: utente.password});
+    let novoutente = new utentimodel({username:utente.username,password:utente.password})
     await novoutente.save();
     console.log("scritto "+novoutente);
 }
 
 async function cercadati(utente ,callback){
    
-    await mongoose.connect(MONGODB_URI);
-    userSchema.findOne({username: utente.username},function(err,user){
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    utentimodel.findOne({username: utente.username },function(err,user){
         if(user.password === utente.password)
             callback(false,user)
 
@@ -37,8 +39,9 @@ async function cercadati(utente ,callback){
     });
 }
 async function cerca(utente ,callback){
-    await mongoose.connect(MONGODB_URI);
-    userSchema.findOne({username: utente.username},function(err,user){
+    
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    utentimodel.findOne({username: utente.username},function(err,user){
         let risposta;
         if(user===null)
             risposta=false
@@ -59,7 +62,7 @@ module.exports = {
     cancellautente: function(utente){
         elimina(utente)
     },
-
+    // specifico
     datiutente: function(utente ,callback){
         cercadati(utente,function(err,data){
             if (err) 
@@ -68,7 +71,7 @@ module.exports = {
         })
 
     },
-
+    //esistenza
     cercautente: function(utente ,callback){
         cerca(utente,function(err,data){
             
@@ -78,10 +81,10 @@ module.exports = {
     },
     
 
-    scriviutente: function(utente ,edipendente,callback){
+    scriviutente: function(utente ,callback){
         console.log(utente);
-        scrivi(utente, edipendente).catch((error)=> console.log(error));
-        callback(true)
+        scrivi(utente).catch((error)=> console.log(error));
+        
         
     },
 

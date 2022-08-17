@@ -12,40 +12,41 @@ const eventoSchema = new mongoose.Schema({
         type: Boolean
     }
 });
+const eventimodel = mongoose.model("modello", eventoSchema);
 
 
 async function cerca(evento){
-    await mongoose.connect(MONGODB_URI);
-    eventoSchema.findOne({nome: evento.body.nome,creatore:evento.params},function(err,evento){
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    eventimodel.findOne({nome: evento.body.nome,creatore:evento.params},function(err,evento){
         callback(err,evento);
     });
 };
 async function elimina(evento){
-    await mongoose.connect(MONGODB_URI);
-    eventoSchema.deleteOne({nome: evento.body.nome,creatore:evento.params},function(err,evento){})
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    eventimodel.deleteOne({nome: evento.body.nome,creatore:evento.params},function(err,evento){})
 };
 async function scrivi(evento){
     if(evento.body.nome==null)
         return
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
     
-    let novoevento = new userSchema({nome: evento.body.nome , completato: false , creatore: evento.params});
+    let novoevento = new eventimodel({nome: evento.body.nome , completato: false , creatore: evento.params});
     await novoevento.save();
     console.log("scritto "+novoevento);
 };
 async function modifica(evento,nuovonome) {
-    await mongoose.connect(MONGODB_URI);
-    eventoSchema.updateOne({nome: evento.body.nome,creatore: evento.params},{nome:nuovonome})
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    eventimodel.updateOne({nome: evento.body.nome,creatore: evento.params},{nome:nuovonome})
 };
 async function toggle(evento) {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
     let opposto
     if(evento.body.comletato)
         opposto=false
     else
         opposto=true
 
-    eventoSchema.updateOne({nome: evento.body.nome,creatore: evento.params},{completato: opposto })
+        eventimodel.updateOne({nome: evento.body.nome,creatore: evento.params},{completato: opposto })
 }
 async function leggi(callback){
     await mongoose.connect("mongodb://127.0.0.1:27017/user");
@@ -73,7 +74,7 @@ module.exports ={
                 esiste=true
             else
                 esiste= false
-                
+
             callback(false,esiste);
         })
 
