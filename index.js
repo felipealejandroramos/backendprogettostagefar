@@ -15,10 +15,11 @@ app.use('/', function(req,res,next){
 
 app.use('/', api);
 
+const PORT =process.env.PORT || 3000;
 
-app.listen(3000, "localhost", function () {
+app.listen(PORT,function () {
     
-    console.log(" sever avviato nella porta: 3000" );
+    console.log(" sever avviato nella porta: " + PORT);
     
 })
 
