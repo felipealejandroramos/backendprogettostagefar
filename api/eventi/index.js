@@ -15,7 +15,7 @@ module.exports = {
           }
       })
   },
-    modificaevento: function(req,res){
+   /* modificaevento: function(req,res){
         modelli.cercaevento(req, function(err,data){
             if(data){
             modelli.modificaevento(req)
@@ -25,7 +25,7 @@ module.exports = {
                 res.send("evento inesistente");
             }
          })
-    },
+    },*/
     togglecaevento: function(req,res){
         modelli.cercaevento(req, function(err,data){
             if(data){
@@ -40,14 +40,8 @@ module.exports = {
     }
   ,
   getevento: function(req,res){
-      modelli.cercaevento(req,function(err,dati){
-          if(dati){
               modelli.datieventi( req, function(err,data){
                       res.send(data)
-          })}
-          else 
-              res.send(false)
-  
   })},
   agungieveto: function(req, res){
       modelli.cercaevento(req, function(err,data){                                                                        

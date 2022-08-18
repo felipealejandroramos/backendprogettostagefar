@@ -6,52 +6,59 @@ const eventoSchema = new mongoose.Schema({
     },
     nome: {
         type: String,
-        minlength: 6
+        
     },
-    comletato: {
+    completato: {
         type: Boolean
     }
 });
 const eventimodel = mongoose.model("modello", eventoSchema);
 
 
-async function cerca(evento){
+async function cerca(evento,callback){
     await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
-    eventimodel.findOne({nome: evento.body.nome,creatore:evento.params},function(err,evento){
-        callback(err,evento);
+    eventimodel.findOne({nome: evento.body.nome,creatore:evento.params.id},function(err,data){
+        let risposta;
+        if(data===null)
+            risposta=false
+            // scrive
+        else
+            risposta=true;
+            // erorre
+
+        callback(err,risposta)
+
     });
 };
 async function elimina(evento){
     await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
-    eventimodel.deleteOne({nome: evento.body.nome,creatore:evento.params},function(err,evento){})
+
+    eventimodel.deleteOne({nome: evento.body.nome,creatore:evento.params.id},function(err,evento){})
 };
 async function scrivi(evento){
     if(evento.body.nome==null)
         return
     await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
     
-    let novoevento = new eventimodel({nome: evento.body.nome , completato: false , creatore: evento.params});
+    let novoevento = new eventimodel({nome: evento.body.nome , completato: false , creatore: evento.params.id});
     await novoevento.save();
     console.log("scritto "+novoevento);
 };
-async function modifica(evento,nuovonome) {
-    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
-    eventimodel.updateOne({nome: evento.body.nome,creatore: evento.params},{nome:nuovonome})
-};
+
 async function toggle(evento) {
     await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
-    let opposto
-    if(evento.body.comletato)
+    eventimodel.findOne({nome: evento.body.nome,creatore:evento.params.id},function(err,data){
+    let opposto =true
+    if(data.completato)
         opposto=false
-    else
-        opposto=true
-
-        eventimodel.updateOne({nome: evento.body.nome,creatore: evento.params},{completato: opposto })
+        
+        eventimodel.updateOne({nome: evento.body.nome,creatore: evento.params.id},{completato: opposto })
+    });
 }
-async function leggi(callback){
-    await mongoose.connect("mongodb://127.0.0.1:27017/user");
-    utentimodel.find(function(err,utenti){
-        callback(err,utenti);
+async function leggi(evento,callback){
+    await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
+    eventimodel.find({creatore: evento.params.id},function(err,evento){
+        callback(err,evento);
     });
 }
 
@@ -60,7 +67,7 @@ module.exports ={
         elimina(evento)
     },
     datieventi: function(evento ,callback){
-        leggi(evento,function(err,data){
+        leggi(evento ,function(err,data){
             if (err) 
                 throw err
             callback(false,data)
@@ -69,25 +76,19 @@ module.exports ={
     },
     cercaevento: function(evento ,callback){
         cerca(evento,function(err,data){
-            let esiste
-            if(data!=null)
-                esiste=true
-            else
-                esiste= false
-
-            callback(false,esiste);
+            
+            callback(false,data);
         })
 
     },
     scrivievento: function(evento ,edipendente,callback){
         console.log(evento);
         scrivi(evento).catch((error)=> console.log(error));
-        callback(true)
-        
-    },
+    
+    },/*
     modificaevento: function(evento){
         modifica(evento)
-    },
+    },*/
     toggleevento: function(evento){
         toggle(evento)
     }
