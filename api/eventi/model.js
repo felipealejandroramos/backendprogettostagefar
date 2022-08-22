@@ -48,11 +48,11 @@ async function scrivi(evento){
 async function toggle(evento) {
     await mongoose.connect("mongodb+srv://app:app@cluster0.evzpwjo.mongodb.net/?retryWrites=true&w=majority");
     eventimodel.findOne({nome: evento.body.nome,creatore:evento.params.id},function(err,data){
-    let opposto =true
-    if(data.completato)
-        opposto=false
         
-        eventimodel.updateOne({nome: evento.body.nome,creatore: evento.params.id},{completato: opposto })
+        let opposto =! data.completato
+        data.completato = opposto
+        data.save();
+       // eventimodel.updateOne({nome: data.nome,creatore: data.creatore},{completato: opposto })
     });
 }
 async function leggi(evento,callback){
